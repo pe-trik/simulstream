@@ -28,6 +28,8 @@ from simulstream.metrics.readers import ReferenceSentenceDefinition, OutputWithD
 from simulstream.metrics.scorers.latency import LatencyScorer, LatencyScoringSample, LatencyScores
 from simulstream.metrics.scorers.latency.mwersegmenter import ResegmentedLatencyScoringSample
 
+LOGGER = logging.getLogger("simulstream.metrics.scorers.latency.softsegmenter")
+
 INF = float("inf")
 PUNCT = set([".", "!", "?", ",", ";", ":", "-", "(", ")"])
 CHINESE_PUNCT = set(["。", "！", "？", "，", "；", "：", "—", "（", "）"])
@@ -41,9 +43,6 @@ class Match:
     DELETE = 1
     INSERT = 2
     NONE = 3
-
-
-LOGGER = logging.getLogger("simulstream.metrics.scorers.latency.softsegmenter")
 
 
 @dataclass
