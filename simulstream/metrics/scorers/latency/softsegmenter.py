@@ -18,7 +18,7 @@ import unicodedata
 from abc import abstractmethod
 from dataclasses import dataclass
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 from mosestokenizer import MosesTokenizer
 
@@ -330,7 +330,7 @@ class SoftSegmenterBasedLatencyScorer(SegmenterBasedScorer):
 
         words = []
         for unit, delay, elapsed in zip(
-            units, output.ideal_delays, output.computational_aware_delays):
+          units, output.ideal_delays, output.computational_aware_delays):
             words.append(Word(
                 text=unit,
                 delay=delay,
@@ -362,7 +362,7 @@ class SoftSegmenterBasedLatencyScorer(SegmenterBasedScorer):
                 words.append(Word(text=unit, delay=delay, seq_id=i))
         return words
 
-    def tokenize_words(self, words: List[Word], tokenizer: Callable) -> List[Word]:
+    def tokenize_words(self, words: List[Word], tokenizer: Optional[MosesTokenizer]) -> List[Word]:
         """
         Tokenize words using Moses tokenizer.
 
@@ -377,7 +377,10 @@ class SoftSegmenterBasedLatencyScorer(SegmenterBasedScorer):
         tokenized_words: List[Word] = []
         for word in words:
             text = unicode_normalize(word.text).lower()
-            result = tokenizer(text)  # type: ignore
+            if tokenizer is not None:
+                result = tokenizer(text)
+            else:
+                result = text
             # Ensure result is a list
             if isinstance(result, str):
                 tokens: List[str] = [result]
@@ -411,7 +414,7 @@ class SoftSegmenterBasedLatencyScorer(SegmenterBasedScorer):
                 "recommended to specify a moses_lang for proper tokenization. Set "
                 "--moses-lang to the appropriate language code (e.g., 'en', 'de') "
                 "or to 'zh'/'ja' to skip tokenization.")
-            tokenizer = lambda x: x  # Identity tokenizer for character-level or when moses_lang is None
+            tokenizer = None
         else:
             tokenizer = MosesTokenizer(lang=self.moses_lang, no_escape=True)
 

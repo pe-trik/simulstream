@@ -39,7 +39,7 @@ class LongYAAL(SoftSegmenterBasedLatencyScorer):
 
     The key difference from StreamLAAL is the use of SoftSegmenter's more sophisticated
     alignment algorithm that handles long-form audio better. Additionally, LongYAAL is considers
-    all output tokens up until the end of the recording. StreamLAAL ignores any output tokens 
+    all output tokens up until the end of the recording. StreamLAAL ignores any output tokens
     emitted after the end of the reference segments.
     """
 
@@ -119,7 +119,8 @@ class LongYAAL(SoftSegmenterBasedLatencyScorer):
                     # This considers the entire recording, not just this segment.
                     # This allows LongYAAL to account for outputs emitted after the reference
                     # segment ends but before the recording ends (key difference from StreamLAAL)
-                    relative_recording_duration = recording_duration - sentence_reference.start_time
+                    relative_recording_duration = \
+                        recording_duration - sentence_reference.start_time
 
                     ideal_score = self._sentence_level_yaal(
                         ideal_delays,

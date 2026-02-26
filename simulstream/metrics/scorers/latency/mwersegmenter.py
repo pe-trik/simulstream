@@ -13,7 +13,6 @@
 # limitations under the License
 
 from abc import abstractmethod
-from dataclasses import dataclass
 from typing import List
 
 from mweralign import mweralign
