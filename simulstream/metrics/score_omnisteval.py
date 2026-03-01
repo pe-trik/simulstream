@@ -7,7 +7,12 @@ import omnisteval
 import sacrebleu
 
 import simulstream
-from omnisteval.io import load_resegmentation_inputs as load_inputs, dump_instances_jsonl, dump_scores_tsv, format_report
+from omnisteval.io import (
+    load_resegmentation_inputs as load_inputs,
+    dump_instances_jsonl,
+    dump_scores_tsv,
+    format_report,
+)
 from omnisteval import resegment
 from omnisteval import evaluate_instances
 
@@ -30,7 +35,8 @@ def _build_settings(
     moses_tokenizer_lang: Optional[str],
     bleu_tokenizer: str,
     comet: bool,
-    comet_model: str,):
+    comet_model: str,
+):
     """
     Build a dictionary of settings to log alongside the scores.
     This is not used for the actual scoring, but can be helpful for record-keeping and debugging.
@@ -79,18 +85,16 @@ def main(
             source_sentences = [line.strip() for line in f]
 
     LOGGER.info("Loading resegmentation inputs for OmniSTEval...")
-    ref_words, hyp_words, segmentation, ref_sentences, all_have_emission_ca = (
-        load_inputs(
-            audio_definition,
-            None,
-            reference,
-            log_file,
-            hypothesis_format="simulstream",
-            char_level=(latency_unit == "char"),
-            offset_delays=False,
-            fix_emission_ca_flag=False,
-            simulstream_config_file=eval_config,
-        )
+    ref_words, hyp_words, segmentation, ref_sentences, all_have_emission_ca = load_inputs(
+        audio_definition,
+        None,
+        reference,
+        log_file,
+        hypothesis_format="simulstream",
+        char_level=(latency_unit == "char"),
+        offset_delays=False,
+        fix_emission_ca_flag=False,
+        simulstream_config_file=eval_config,
     )
 
     # suppress mosestokenizer INFO logs which are very verbose
@@ -139,14 +143,16 @@ def main(
     if output_folder is not None:
         dump_instances_jsonl(instances_dict, output_folder)
         dump_scores_tsv(scores, output_folder, is_longform=True)
-        with open(os.path.join(output_folder, "evaluation_report.txt"), "w", encoding="utf-8") as f:
+        with open(
+            os.path.join(output_folder, "evaluation_report.txt"), "w", encoding="utf-8"
+        ) as f:
             f.write(report)
 
 
 def cli_main():
     parser = argparse.ArgumentParser(
         "run_omnisteval",
-        description="Score streaming translation outputs using OmniSTEval."
+        description="Score streaming translation outputs using OmniSTEval.",
     )
     parser.add_argument("--eval-config", type=str, required=True)
     parser.add_argument("--log-file", type=str, required=True)
@@ -192,8 +198,9 @@ def cli_main():
         type=str,
         default="Unbabel/wmt22-comet-da",
         help=(
-            "Name or path of the COMET model to use for quality estimation when --comet is enabled. "
-            "Default: Unbabel/wmt22-comet-da."),
+            "Name or path of the COMET model to use for quality estimation when --comet is "
+            "enabled. Default: Unbabel/wmt22-comet-da."
+        ),
     )
     parser.add_argument("--comet", action="store_true", help="Enable COMET scoring.")
     parser.add_argument("--source-sentences-file", type=str, default=None)
